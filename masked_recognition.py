@@ -6,6 +6,9 @@ from tensorflow.keras.models import load_model
 SCALE = (100, 100)
 BASE_DIR= r"C:\Users\lafacero\Documents\GitHub\covid19-mask-recognition"
 
+count_masked=0
+count_unmasked=0
+
 # Importiamo il Modello
 model=load_model(os.path.join(BASE_DIR, r"masked_recognition.h5"))
 cap = cv2.VideoCapture(0)
@@ -41,11 +44,21 @@ while(cap.isOpened()):
         
         y=np.argmax(result,axis=1)[0]
         label = "No maschera" if y>0.5 else "Maschera"
+        
+        if y>0.5:
+            count_unmasked+=1 
+        else:
+            count_masked+=1
 
         #stampo il rettangolo, label, etc. intorno all'immagine originale
         cv2.rectangle(frame, (rect[0], rect[1]), (rect[0]+rect[2], rect[1]+rect[3]), (0,255,0), 2)
         cv2.rectangle(frame, (rect[0], rect[1]-20), (rect[0]+170, rect[1]), (0,255,0), cv2.FILLED)
         cv2.putText(frame, label, (rect[0]+5, rect[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2)
+        cv2.putText(frame, 'Mascherine rilevate: '+str(count_masked), (frame.shape[1]-200, frame.shape[0]-20), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 2) 
+
+        #reset contatori per il frame successivo
+        count_masked=0
+        count_unmasked=0
         
     cv2.imshow("LIVE", frame)
     if(cv2.waitKey(1)==ord("q")):
