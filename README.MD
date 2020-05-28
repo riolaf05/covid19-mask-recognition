@@ -4,3 +4,7 @@
 
 2. masked_recognition_training_wo_generators.ipynb preprocess and training using bigger dataset.
 
+
+### Results
+
+![results](https://github.com/riolaf05/covid19-mask-recognition/blob/master/results.JPG)
